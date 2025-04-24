@@ -1,12 +1,7 @@
 ;Ovde setujemo neke osnovne segmentne registre i ukljucujemo ostale fajlove kao sto su swtich32b.asm, gdt.asm, messages.asm i ostale
 
 [BITS 16] ; Nalazimo se u 16b real modu, u ovom modu se nalazi svaki procesor nakon pokretanja racunara i inicijalizacije hardvera od strane BIOS-a
-;call print_msg1 ; Pozovi funkciju za ispis
-;call delay
-;call print_msg2
-;call delay
-;call print_msg3
-;call print_msg4
+
 [ORG 0x7c00] ; Na ovu adresu BIOS ucitava nas bootloader kada ukljucimo racunar i onda ga nakon inicijalizacije hardvera trazi na ovoj adresi
 
 CODE_OFFSET equ 0x8
@@ -15,12 +10,7 @@ DATA_OFFSET equ 0x10
 KERNEL_LOAD_SEG equ 0x1000
 KERNEL_START_ADDRESS equ 0x1000
 
-;call print_msg5
-;call delay
-
 start: 
-	;call print_msg6
-	;call delay
 	cli ; Ovom instrukcijom kazemo procesoru da sve interrupt-ove zanemari i da nastavi sa izvrsavanjem koda, da ne bi prekinuo proces setovanja segmentnih registara
 	xor ax, ax
 	mov ds, ax ; Setujemo segmentni registar ds na vrednost 0 (0x00) tako sto mu dodelimo vrednost ax
@@ -28,12 +18,6 @@ start:
 	mov ss, ax ; Setujemo segmentni registar ds na vrednost 0 (0x00) tako sto mu dodelimo vrednost ax
 	mov sp, 0x7c00 ; Setujemo sp (stack pointer) registar na pocetak bootloader-a, u sustini, nas stack ce rasti i pomerati pointer na dole, i postavljanjem pointera na pocetak samog bootloader-a mi cemo omoguciti da stack pravilno funkcionise i smesta kernel i ostatak sistema redom
 	sti ; Ovom instrukcijom procesoru vracamo mogucnost obradjivanja interrupt-ova koje smo onemogucili pre setovanja svih segmentnih registara komdanom cli
-	;cli ; Ponovo zanemarimo interrupt-ove
-	;hlt ; Zaustavljamo CPU 
-	
-	;%include "bootloader/SwitchTo32b.asm" - dodaj posle iz zasebnog fajla
-	;%include "bootloader/GDT.asm" - dodaj posle iz zasebnog fajla
-	;%include "bootloader/delay.asm"
 	
 ;Load Kernel
 
@@ -48,16 +32,6 @@ int 0x13 ; BIOS interrupt (funkcija) za pristup disku
 
 jc disk_read_error
 	
-;Call 
-;call print_msg7
-;call delay
-;call print_msg8
-;call delay	
-;call print_msg9
-;call delay
-;call print_msg10
-;call delay
-;%include "bootloader/delay.asm"
 switch_32b:
 	cli ; iskljucujemo interrupt
 	lgdt[gdt_descriptor] ; ucitavamo GDT koriscenjem descriptor-a
@@ -70,8 +44,7 @@ disk_read_error:
 	hlt ; u slucaju greske prekidamo procesor 
 
 ;GDT setup
-;Call
-;%include "bootloader/print.asm"
+
 gdt_start:
 	dd 0x00000000 ; NULL desrciptor - neophodan za ulaz u GDT
 	dd 0x00000000 ; Nastavak NULL descriptor-a
@@ -110,8 +83,6 @@ init_32b:
 	mov gs, ax
 	mov ebp, 0x9C00 ; postavi base pointer, zbog prelaska u 32b rezim
 	mov esp, ebp ; postavi stack pointer (ponovo zbog prelaska u 32b rezim), i inizijalizuj stack 
-	
-	;call Begin_32b
 	
 	in al, 0x92 ; citamo vrednost iz I/O porta 0x92 (system control port)
 	or al, 2 ; postavljamo bit 1 u al da bi omogucili A20 liniju (neophodno je za pristup memoriji vecoj od 1MB)
