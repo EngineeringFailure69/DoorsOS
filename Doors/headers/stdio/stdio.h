@@ -1,11 +1,10 @@
 #include "../string/string.h"
 #include "../../drivers/drivers.h"
+#include "../consts_types.h"
 
 #define VIDEO_MEM 0xb8000
 #define WHITE_COLOR 0x0f
 #define NULL ((void*)0)
-typedef unsigned int size_t;
-typedef unsigned int uint32_t;
 
 typedef char* va_list; //Pokazivac na stek za pristup elementima 
 

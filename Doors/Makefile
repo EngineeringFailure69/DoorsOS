@@ -8,6 +8,7 @@ all:
 	i686-elf-gcc -I ./drivers/VGA $(FLAGS) -std=gnu99 -c ./drivers/VGA/VGA.c -o ./build/VGA.o
 	i686-elf-gcc -I ./headers/stdio $(FLAGS) -std=gnu99 -c ./headers/stdio/stdio.c -o ./build/stdio.o
 	i686-elf-gcc -I ./headers/string $(FLAGS) -std=gnu99 -c ./headers/string/string.c -o ./build/string.o
+	i686-elf-gcc -I ./CPU $(FLAGS) -std=gnu99 -c ./CPU/IDT.c -o ./build/IDT.o
 	i686-elf-gcc -I ./headers/mem $(FLAGS) -std=gnu99 -c ./headers/mem/mem.c -o ./build/mem.o
 	i686-elf-ld -g -relocatable $(FILES) -o ./build/completeKernel.o
 	i686-elf-gcc $(FLAGS) -T linker.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib ./build/completeKernel.o
@@ -27,6 +28,8 @@ clean:
 	rm -f ./build/stdio.o
 	rm -f ./build/string.o
 	rm -f ./build/mem.o
+	rm -f ./build/IDT.o
 	
 run-Doors:
+	#qemu-system-x86_64 -hda os.bin
 	qemu-system-x86_64 -drive format=raw,file=os.bin

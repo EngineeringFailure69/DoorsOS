@@ -1,6 +1,4 @@
-typedef unsigned int uint8_t;
-typedef unsigned int uint32_t;
-typedef unsigned int size_t;
+#include "../consts_types.h"
 
 typedef enum { false, true } bool;
 

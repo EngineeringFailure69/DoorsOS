@@ -1,5 +1,3 @@
-//#include "../../headers/stdio/stdio.h"
-
 #define VGA_CONTROL_REGISTER 0x3d4
 #define VGA_DATA_REGISTER 0x3d5
 #define CURSOR_POSITION_LOW_BYTE_OFFSET 0x0f
