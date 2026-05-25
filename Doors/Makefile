@@ -1,15 +1,17 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/VGA.o ./build/stdio.o ./build/string.o ./build/mem.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/VGA.o ./build/stdio.o ./build/string.o ./build/mem.o ./build/ports.o ./build/8259_PIC.o
 FLAGS = -g -ffreestanding -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc -Wextra -fno-pie -fno-common
 
 all:
 	nasm -f bin ./bootloader/bootloader.asm -o ./bin/bootloader.bin
 	nasm -f elf -g ./bootloader/kernel.asm -o ./build/kernel.asm.o
 	i686-elf-gcc -I ./kernel $(FLAGS) -std=gnu99 -c ./kernel/kernel.c -o ./build/kernel.o
+	i686-elf-gcc -I ./drivers/ports $(FLASGS) -std=gnu99 -c ./drivers/ports/ports.c -o ./build/ports.o
 	i686-elf-gcc -I ./drivers/VGA $(FLAGS) -std=gnu99 -c ./drivers/VGA/VGA.c -o ./build/VGA.o
 	i686-elf-gcc -I ./headers/stdio $(FLAGS) -std=gnu99 -c ./headers/stdio/stdio.c -o ./build/stdio.o
 	i686-elf-gcc -I ./headers/string $(FLAGS) -std=gnu99 -c ./headers/string/string.c -o ./build/string.o
-	i686-elf-gcc -I ./CPU $(FLAGS) -std=gnu99 -c ./CPU/IDT.c -o ./build/IDT.o
+	i686-elf-gcc -I ./CPU/IDT $(FLAGS) -std=gnu99 -c ./CPU/IDT/IDT.c -o ./build/IDT.o
 	i686-elf-gcc -I ./headers/mem $(FLAGS) -std=gnu99 -c ./headers/mem/mem.c -o ./build/mem.o
+	i686-elf-gcc -I ./CPU/8259_PIC $(FLAGS) -std=gnu99 -c ./CPU/8259_PIC/8259_PIC.c -o ./build/8259_PIC.o
 	i686-elf-ld -g -relocatable $(FILES) -o ./build/completeKernel.o
 	i686-elf-gcc $(FLAGS) -T linker.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib ./build/completeKernel.o
 
@@ -29,6 +31,8 @@ clean:
 	rm -f ./build/string.o
 	rm -f ./build/mem.o
 	rm -f ./build/IDT.o
+	rm -f ./build/ports.o
+	rm -f ./build/8259_PIC.o
 	
 run-Doors:
 	#qemu-system-x86_64 -hda os.bin

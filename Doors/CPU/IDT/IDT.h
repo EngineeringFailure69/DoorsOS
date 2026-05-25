@@ -1,5 +1,4 @@
-#include "../headers/consts_types.h"
-#include "../headers/mem/memory.h"
+#include "../../headers/headers.h"
 
 //32-bit IDT entry
 typedef struct
