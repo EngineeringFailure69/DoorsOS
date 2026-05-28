@@ -1,3 +1,6 @@
+#ifndef IDT_H
+#define IDT_H
+
 #include "../../headers/headers.h"
 
 //32-bit IDT entry
@@ -20,8 +23,7 @@ typedef struct
 #define KERNEL_CS 0x08 // ovo je vrednost za kernel_cs iz idt_entry_t
 #define NUMBER_OF_IDT_ENTRIES 256 //IDT ima 256 ulaza koji moraju biti definisani da bi se izbegla greska, moze da ima i vise ali se ignorisu
 
-static idt_entry_t idt[NUMBER_OF_IDT_ENTRIES]; // kreiram IDT
-static idt_registry_t idtr; // registar
-
 void idt_set_entry(uint8_t vector, uint32_t isr, uint8_t flags);
 void idt_init();
+
+#endif

@@ -1,5 +1,5 @@
-//#ifndef 8259_PIC_H
-//#define 8259_PIC_H
+#ifndef PIC_8259_H
+#define PIC_8259_H
 
 #include "../../headers/headers.h"
 #include "../../drivers/drivers.h"
@@ -25,4 +25,5 @@ void pic_remap(); //glavni zadatak ove remap funkcije je da zapravo pomeri IRQ v
 void irq_set_mask(uint8_t irq_line); //iskljucuje IRQ na zadatoj liniji, odnosno maskira ga tako da vise ne bude citljiv kao vazeci
 void irq_clear_mask(uint8_t irq_line); //ukljucuje IRQ na zadatoj liniji tako sto mu opet menja masku
 void pic_disable(void); //treba maskirati sve IRQ-ove pre obavljanja remap
-//#endif
+
+#endif

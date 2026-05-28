@@ -1,3 +1,6 @@
+#ifndef VGA_H
+#define VGA_H
+
 #include "../ports/ports.h"
 
 #define VGA_CONTROL_REGISTER 0x3d4
@@ -12,3 +15,5 @@ int get_cursor();
 int get_offset(int cols, int rows);
 int get_row_from_offset(int offset);
 int handle_new_line(int offset);
+
+#endif

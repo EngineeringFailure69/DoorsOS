@@ -1,5 +1,8 @@
 #include"IDT.h"
 
+idt_entry_t idt[NUMBER_OF_IDT_ENTRIES]; // kreiram IDT
+idt_registry_t idtr; // registar
+
 void idt_set_entry(uint8_t vector, uint32_t isr, uint8_t flags)
 {
     idt_entry_t* descriptor = &idt[vector];
@@ -18,5 +21,4 @@ void idt_init()
     
     memset(idt, 0, sizeof(idt));
     __asm__ volatile ("lidt %0" : : "m"(idtr)); //Loadovanje IDT-a
-    //__asm__ volatile ("sti"); ovo zovem kad pokrecem kernel
 }

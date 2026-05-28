@@ -1,3 +1,6 @@
+#ifndef STDIO_H
+#define STDIO_H
+
 #include "../string/string.h"
 #include "../../drivers/drivers.h"
 #include "../consts_types.h"
@@ -40,3 +43,5 @@ void print_memory_as_hex(const char* buffer, size_t size);
 void d_printf(const char* format, ...);
 void mirror_string(char str[]);
 float my_fabsf(float x);
+
+#endif

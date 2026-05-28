@@ -1,3 +1,6 @@
+#ifndef DYNAMIC_H
+#define DYNAMIC_H
+
 #include "../consts_types.h"
 
 typedef enum { false, true } bool;
@@ -20,3 +23,5 @@ void* memory_allocation(size_t size);
 void *merge_next_node_into_current(memory_node_t *current_mem_node);
 void *merge_current_node_into_previous(memory_node_t *current_mem_node);
 void memory_free(void *p);
+
+#endif

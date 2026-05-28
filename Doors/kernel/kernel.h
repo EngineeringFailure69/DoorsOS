@@ -1,11 +1,9 @@
-#include "../drivers/drivers.h"
-#include "../headers/string/string.h"
-#include "../headers/mem/memory.h"
-#include "../headers/mem/dynamic.h"
-#include "../headers/stdio/stdio.h"
-
 //#ifndef KERNEL_H
 //#define KERNEL_H
+
+#include "../drivers/drivers.h"
+#include "../headers/headers.h"
+#include "../CPU/CPU.h"
 
 void _start();
 void welcome_screen();

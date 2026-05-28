@@ -10,6 +10,12 @@ void _start()
 {
 	//d_printf("Test float: %f\n", 9.9);
 	//initialize_kernel();
+	//welcome_screen();
+	clear_screen();
+	d_printf("Installing interrupt service routines (ISRs) and enabling external interrupts\n");
+	isr_install();
 	welcome_screen();
+	asm volatile ("sti"); //omoguci eksterne interrupt-ove
+	//asm volatile ("int $0x3");
 	while(1);
 }

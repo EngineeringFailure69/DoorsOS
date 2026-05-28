@@ -2,7 +2,7 @@
 
 void pic_send_eoi(uint8_t irq)
 {
-    if(irq >= 8)
+    if(irq >= 40) //ovde je 40, a ne 8 zato sto se IRQ-ovi 0-15 mapiraju na ISR-ove 32-47, pa onda od 40-47 ide slave 
     	byte_out(SLAVE_PIC_COMMAND_PORT, PIC_EOI); //ako je IRQ 8-15 poslat, odnosno ako je slave PIC u pitanju, saljem i njemu PIC_EOI
     byte_out(MASTER_PIC_COMMAND_PORT, PIC_EOI); //master PIC svakako dobija PIC_EOI, jer se njemu salje ako je poslat IRQ < 8, a salje mu se ako se salje i slave PIC-u
 }

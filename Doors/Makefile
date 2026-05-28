@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/VGA.o ./build/stdio.o ./build/string.o ./build/mem.o ./build/ports.o ./build/8259_PIC.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/VGA.o ./build/stdio.o ./build/string.o ./build/mem.o ./build/ports.o ./build/8259_PIC.o ./build/isr.asm.o ./build/isr.o ./build/irq.asm.o ./build/IDT.o
 FLAGS = -g -ffreestanding -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc -Wextra -fno-pie -fno-common
 
 all:
@@ -12,17 +12,24 @@ all:
 	i686-elf-gcc -I ./CPU/IDT $(FLAGS) -std=gnu99 -c ./CPU/IDT/IDT.c -o ./build/IDT.o
 	i686-elf-gcc -I ./headers/mem $(FLAGS) -std=gnu99 -c ./headers/mem/mem.c -o ./build/mem.o
 	i686-elf-gcc -I ./CPU/8259_PIC $(FLAGS) -std=gnu99 -c ./CPU/8259_PIC/8259_PIC.c -o ./build/8259_PIC.o
+	nasm -f elf -g ./CPU/ISR_IRQ/isr.asm -o ./build/isr.asm.o 
+	nasm -f elf -g ./CPU/ISR_IRQ/irq.asm -o ./build/irq.asm.o 
+	i686-elf-gcc -I ./CPU/ISR_IRQ $(FLAGS) -std=gnu99 -c ./CPU/ISR_IRQ/isr.c -o ./build/isr.o
 	i686-elf-ld -g -relocatable $(FILES) -o ./build/completeKernel.o
 	i686-elf-gcc $(FLAGS) -T linker.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib ./build/completeKernel.o
 
-	dd if=./bin/bootloader.bin >> os.bin  
-	dd if=./bin/kernel.bin >> os.bin 
-	dd if=/dev/zero bs=512 count=10 >> os.bin
+	dd if=./bin/bootloader.bin >> DoorsOS.bin  
+	dd if=./bin/kernel.bin >> DoorsOS.bin 
+	dd if=/dev/zero bs=512 count=10 >> DoorsOS.bin
+	#img fajl kreacija
+	dd if=/dev/zero of=DoorsOS.img bs=1M count=16
+	dd if=./bin/bootloader.bin of=DoorsOS.img conv=notrunc
+	dd if=./bin/kernel.bin of=DoorsOS.img bs=512 seek=1 conv=notrunc
 	
 clean:
 	rm -f ./bin/bootloader.bin
 	rm -f ./bin/kernel.bin
-	rm -f  os.bin
+	rm -f  DoorsOS.bin
 	rm -f ./build/kernel.asm.o
 	rm -f ./build/kernel.o
 	rm -f ./build/completeKernel.o
@@ -32,8 +39,12 @@ clean:
 	rm -f ./build/mem.o
 	rm -f ./build/IDT.o
 	rm -f ./build/ports.o
+	rm -f DoorsOS.img
 	rm -f ./build/8259_PIC.o
+	rm -f ./build/isr.o
+	rm -f ./build/isr.asm.o
+	rm -f ./build/irq.asm.o
 	
 run-Doors:
 	#qemu-system-x86_64 -hda os.bin
-	qemu-system-x86_64 -drive format=raw,file=os.bin
+	qemu-system-x86_64 -drive format=raw,file=DoorsOS.bin
