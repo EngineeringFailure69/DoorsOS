@@ -7,7 +7,6 @@
 
 #define VIDEO_MEM 0xb8000
 #define WHITE_COLOR 0x0f
-#define NULL ((void*)0)
 
 typedef char* va_list; //Pokazivac na stek za pristup elementima 
 

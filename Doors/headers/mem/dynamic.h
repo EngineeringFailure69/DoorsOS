@@ -3,8 +3,6 @@
 
 #include "../consts_types.h"
 
-typedef enum { false, true } bool;
-
 typedef struct memory_node
 {
 	uint32_t size;
@@ -13,7 +11,6 @@ typedef struct memory_node
 	struct memory_node* prev; 
 }memory_node_t;
 
-#define NULL_POINTER ((void*)0)
 #define MEMORY_BLOCK 4096
 #define MEMORY_CHUNK sizeof(memory_node_t)
 

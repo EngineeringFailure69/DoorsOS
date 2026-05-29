@@ -33,13 +33,13 @@ void initialize_memory()
 {
 	memory_start = (memory_node_t *) memory_area;
 	memory_start->size = MEMORY_BLOCK - MEMORY_CHUNK; 
-	memory_start->next = NULL_POINTER;
-	memory_start->prev = NULL_POINTER;
+	memory_start->next = NULL;
+	memory_start->prev = NULL;
 }
 
 void* find_block(memory_node_t* memory, size_t size)
 {
-	memory_node_t* best_block = (memory_node_t *) NULL_POINTER;
+	memory_node_t* best_block = (memory_node_t *) NULL;
 	uint32_t best_block_size = MEMORY_BLOCK + 1;
 	memory_node_t* current_block = memory;	
 	
@@ -59,7 +59,7 @@ void* find_block(memory_node_t* memory, size_t size)
 void* memory_allocation(size_t size)
 {
 	memory_node_t *best_block = (memory_node_t*) find_block(memory_start, size);
-	if(best_block != NULL_POINTER)
+	if(best_block != NULL)
 	{
 		best_block->size = best_block->size - size - MEMORY_CHUNK;
 		memory_node_t* memory_chunk_alloc = (memory_node_t*) (((uint8_t)best_block ) + MEMORY_CHUNK + best_block->size);
@@ -69,20 +69,20 @@ void* memory_allocation(size_t size)
 		memory_chunk_alloc->prev = best_block;
 		memory_chunk_alloc->next = best_block->next;
 		
-	if (best_block->next != NULL_POINTER) {
+	if (best_block->next != NULL) {
             best_block->next->prev = memory_chunk_alloc;
         }
         best_block->next = memory_chunk_alloc;
 
         return (void *) ((uint8_t *) memory_chunk_alloc + MEMORY_CHUNK);		
 	} 
-	return NULL_POINTER;
+	return NULL;
 }
 
 void *merge_next_node_into_current(memory_node_t *current_mem_node)
 {
 	memory_node_t *next_mem_node = current_mem_node->next;
-	if (next_mem_node != NULL_POINTER && !next_mem_node->used) 
+	if (next_mem_node != NULL && !next_mem_node->used) 
 	{
 		// add size of next block to current block
 		current_mem_node->size += current_mem_node->next->size;
@@ -90,7 +90,7 @@ void *merge_next_node_into_current(memory_node_t *current_mem_node)
 
 		// remove next block from list
 		current_mem_node->next = current_mem_node->next->next;
-		if (current_mem_node->next != NULL_POINTER) 
+		if (current_mem_node->next != NULL) 
 		{
 			current_mem_node->next->prev = current_mem_node;
 		}
@@ -101,7 +101,7 @@ void *merge_next_node_into_current(memory_node_t *current_mem_node)
 void *merge_current_node_into_previous(memory_node_t *current_mem_node)
 {
 	memory_node_t *prev_mem_node = current_mem_node->prev;
-	if (prev_mem_node != NULL_POINTER && !prev_mem_node->used) 
+	if (prev_mem_node != NULL && !prev_mem_node->used) 
 	{
 		// add size of previous block to current block
 		prev_mem_node->size += current_mem_node->size;
@@ -109,7 +109,7 @@ void *merge_current_node_into_previous(memory_node_t *current_mem_node)
 
 		// remove current node from list
 		prev_mem_node->next = current_mem_node->next;
-		if (current_mem_node->next != NULL_POINTER) 
+		if (current_mem_node->next != NULL) 
 		{
 		    current_mem_node->next->prev = prev_mem_node;
 		}
@@ -120,7 +120,7 @@ void *merge_current_node_into_previous(memory_node_t *current_mem_node)
 void memory_free(void *p)
 {
 	// move along, nothing to free here
-	if (p == NULL_POINTER) 
+	if (p == NULL) 
 	{
 		return;
 	}
@@ -129,7 +129,7 @@ void memory_free(void *p)
 	memory_node_t *current_mem_node = (memory_node_t *) ((uint8_t *) p - MEMORY_CHUNK);
 
 	// pointer we're trying to free was not dynamically allocated it seems
-	if (current_mem_node == NULL_POINTER) 
+	if (current_mem_node == NULL) 
 	{
 		return;
 	}
