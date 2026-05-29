@@ -1,5 +1,5 @@
-//#ifndef KERNEL_H
-//#define KERNEL_H
+#ifndef KERNEL_H
+#define KERNEL_H
 
 #include "../drivers/drivers.h"
 #include "../headers/headers.h"
@@ -8,7 +8,7 @@
 void _start();
 void welcome_screen();
 void initialize_kernel();
-//#endif
+#endif
 
 //int broj = 5;
 	//int broj2 = -5;

@@ -1,5 +1,5 @@
 %macro IRQ 2 ;IRQ makro ima dva parametra, 1. IRQ broj (0-15), 2. ISR broj na koji je mapiran (32-47, jer su 0-31 rezervisani od strane CPU)
-    global irq%1 ;stavljamo irq i prvi parametar kao global da bi mogli da ga koristimo u C-u
+    [global irq%1] ;stavljamo irq i prvi parametar kao global da bi mogli da ga koristimo u C-u
     irq%1:
     	cli
     	push byte 0
@@ -7,7 +7,7 @@
     	jmp irq_common_stub
 %endmacro
 
-[EXTERN irq_handler] ;ovo je funkcija u C-u, isr.c fajl
+[extern irq_handler] ;ovo je funkcija u C-u, isr.c fajl
 
 ;Stub handler funkcije
 IRQ 0, 32
@@ -46,8 +46,9 @@ irq_common_stub:
     mov fs, ax
     mov gs, ax
     
+    push esp ;argument irq_handler funkcije registers_t*
     call irq_handler ;funkcija napisana u C-u 
-    add esp, 4 ;sada esp pokazuje na registers_t strukturu iz isr.h fajla, odnosno na argument irq_handler funkcije
+    pop eax
     
     ;vracam stari kontekst procesora da bi procesor nastavio sa izvrsenjem tamo gde je stao
     
@@ -59,4 +60,5 @@ irq_common_stub:
     
     popa ;skidam sve registre koje sam stavio na stek sa pusha u redosledu eax, ecx, edx, ebx, esp, ebp, esi, edi
     add esp, 8 
+    sti
     iret

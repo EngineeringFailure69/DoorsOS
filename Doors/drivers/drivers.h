@@ -3,5 +3,6 @@
 
 #include "./VGA/VGA.h"
 #include "./ports/ports.h"
+#include "./keyboard/keyboard.h"
 
 #endif

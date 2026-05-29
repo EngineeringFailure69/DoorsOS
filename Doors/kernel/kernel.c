@@ -14,8 +14,10 @@ void _start()
 	clear_screen();
 	d_printf("Installing interrupt service routines (ISRs) and enabling external interrupts\n");
 	isr_install();
+	clear_screen();
 	welcome_screen();
+	//clear_screen();
 	asm volatile ("sti"); //omoguci eksterne interrupt-ove
-	//asm volatile ("int $0x3");
+	//init_keyboard();
 	while(1);
 }

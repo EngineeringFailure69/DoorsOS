@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/VGA.o ./build/stdio.o ./build/string.o ./build/mem.o ./build/ports.o ./build/8259_PIC.o ./build/isr.asm.o ./build/isr.o ./build/irq.asm.o ./build/IDT.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/VGA.o ./build/stdio.o ./build/string.o ./build/mem.o ./build/ports.o ./build/8259_PIC.o ./build/isr.asm.o ./build/isr.o ./build/irq.asm.o ./build/IDT.o ./build/keyboard.o #./build/timer.o
 FLAGS = -g -ffreestanding -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc -Wextra -fno-pie -fno-common
 
 all:
@@ -15,6 +15,8 @@ all:
 	nasm -f elf -g ./CPU/ISR_IRQ/isr.asm -o ./build/isr.asm.o 
 	nasm -f elf -g ./CPU/ISR_IRQ/irq.asm -o ./build/irq.asm.o 
 	i686-elf-gcc -I ./CPU/ISR_IRQ $(FLAGS) -std=gnu99 -c ./CPU/ISR_IRQ/isr.c -o ./build/isr.o
+	i686-elf-gcc -I ./drivers/keyboard $(FLAGS) -std=gnu99 -c ./drivers/keyboard/keyboard.c -o ./build/keyboard.o
+	#i686-elf-gcc -I ./CPU/timer $(FLAGS) -std=gnu99 -c ./CPU/timer/timer.c -o ./build/timer.o
 	i686-elf-ld -g -relocatable $(FILES) -o ./build/completeKernel.o
 	i686-elf-gcc $(FLAGS) -T linker.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib ./build/completeKernel.o
 
@@ -44,6 +46,8 @@ clean:
 	rm -f ./build/isr.o
 	rm -f ./build/isr.asm.o
 	rm -f ./build/irq.asm.o
+	rm -f ./build/keyboard.o
+	#rm -f ./build/timer.o
 	
 run-Doors:
 	#qemu-system-x86_64 -hda os.bin

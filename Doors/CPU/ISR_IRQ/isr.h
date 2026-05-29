@@ -90,7 +90,7 @@ typedef struct
     uint32_t eip, cs, eflags, useresp, ss; //ovo procesor stavlja automatski na stek
 }registers_t;
 
-typedef void (*isr_t) (registers_t*); //Omogucuje callback-ove za interrupt-ove. Za IRQ-ove koristim gore definisane vrednosti za mapiranje
+typedef void (*isr_t) (registers_t*); //Omogucuje callback-ove za interrupt-ove. Za IRQ-ove koristim gore definisane vrednosti za mapiranje. Malo objasnjenje ove linije: isr_t je pokazivac na funkciju koja prima registers_t* i vraca void
 
 void isr_handler(registers_t* registers);
 void irq_handler(registers_t* registers);

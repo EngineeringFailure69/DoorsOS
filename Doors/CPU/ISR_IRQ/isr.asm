@@ -1,5 +1,5 @@
 %macro ISR_NO_ERROR_CODE 1 ;definisem makro koji prima 1 parametar, ovo je za ISR koji nemaju error kod
-    [GLOBAL isr%1] ;%1 se koristi za pristup tom jednom parametru, i mora da se koristi GLOBAL da bi kasnije mogao da ovaj asemblerski kod pozivam u C-u
+    [global isr%1] ;%1 se koristi za pristup tom jednom parametru, i mora da se koristi GLOBAL da bi kasnije mogao da ovaj asemblerski kod pozivam u C-u
     isr%1:
 	cli ;zanemarujem sve ostale interrupt-ove
 	push byte 0 ;ovo je "dummy" error kod, jer neki ISR-ovi automatski na stek stavljaju error kod, dok neki to ne rade, a da bi mogli da pozivamo hendler za sve ISR-ove podjednako, mora i stek da bude isti za svaki ISR, pa je neophodno da se na njega stavi ovaj "dummy" kod
@@ -14,11 +14,7 @@
     	push byte %1 ;ovde nema "dummy" koda jer ISR automatski stavlja svoj na stek, interrupt-ovi 8, 10-14 to rade automatski
     	jmp isr_common_stub
 %endmacro 
-
-[EXTERN isr_handler] ;ovo je funkcija u C-u, isr.c fajl
-
-;Ovo je isr common stub koji sluzi da pre nego sto krene sa obradom IRQ-a, sacuva stanje procesora na stek, postavi sve neophodno za kernel mode segmente i obradu, odnosno da postavi sve segment registre, pozove funkciju u C-u koja se koristi za obradu, i da na kraju vrati stek i procesor u stanje pre obrade
-
+    
 ;Stub handler funkcije
 ISR_NO_ERROR_CODE 0
 ISR_NO_ERROR_CODE 1
@@ -53,11 +49,15 @@ ISR_NO_ERROR_CODE 29
 ISR_NO_ERROR_CODE 30
 ISR_NO_ERROR_CODE 31
 
+[extern isr_handler] ;ovo je funkcija u C-u, isr.c fajl
+
+;Ovo je isr common stub koji sluzi da pre nego sto krene sa obradom IRQ-a, sacuva stanje procesora na stek, postavi sve neophodno za kernel mode segmente i obradu, odnosno da postavi sve segment registre, pozove funkciju u C-u koja se koristi za obradu, i da na kraju vrati stek i procesor u stanje pre obrade
+
 isr_common_stub:
 
     ;cuvam kontekst procesora pre obrade
     
-    pusha ;stavljam registre na stek u redosledu edi,esi,ebp,esp,ebx,edx,ecx,eax gde edi ide na dno steka
+    pusha ;stavljam registre na stek u redosledu edi,esi,ebp,esp,ebx,edx,ecx,eax 
     xor eax, eax ;cistim eax registar
     mov ax, ds ;nizih 16 bitova registra eax = ds
     push eax ;cuvam staru vrednost ds (data segment) deskriptora
@@ -70,8 +70,9 @@ isr_common_stub:
     mov fs, ax
     mov gs, ax
     
+    push esp
     call isr_handler ;pozivam handler napisan u C-u
-    add esp, 4 ;sada esp pokazuje na registers_t strukturu iz isr.h fajla, odnosno na argument isr_handler funkcije
+    pop eax
     
     ;vracam stari kontekst procesora da bi procesor nastavio sa izvrsenjem tamo gde je stao
     
@@ -83,4 +84,5 @@ isr_common_stub:
     
     popa ;skidam sve registre koje sam stavio na stek sa pusha u redosledu eax, ecx, edx, ebx, esp, ebp, esi, edi
     add esp, 8 ;pomeram esp pokazivac za 8 bajtova, da bih izbrisao 4 bajta koja su stavljena na stek za broj ISR-a i za error kod
+    sti
     iret ;popuje 5 registara odjednom koje je procesor automatski stavio na stek kada je krenuo u obradu: CS (code segment), EIP (instruction pointer), EFLAGS (flags registar), SS (stack segment) i ESP (stack pointer)
