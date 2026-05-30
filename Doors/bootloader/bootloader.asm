@@ -1,7 +1,6 @@
 ;Ovde setujemo neke osnovne segmentne registre i ukljucujemo ostale fajlove kao sto su swtich32b.asm, gdt.asm, messages.asm i ostale
 
 [BITS 16] ; Nalazimo se u 16b real modu, u ovom modu se nalazi svaki procesor nakon pokretanja racunara i inicijalizacije hardvera od strane BIOS-a
-
 [ORG 0x7c00] ; Na ovu adresu BIOS ucitava nas bootloader kada ukljucimo racunar i onda ga nakon inicijalizacije hardvera trazi na ovoj adresi
 
 CODE_OFFSET equ 0x8
@@ -27,11 +26,11 @@ mov dl, 0x80 ; citamo iz prvog hard drive-a
 mov cl, 0x02 ; krecemo od drugog sektora jer se u prvom sektoru nalazi bootloader
 mov ch, 0x00 ; nulti cilindar 
 mov ah, 0x02 ; postavljamo na 0x02 zato sto to oznacava citanje (0x03 oznacava pisanje)
-mov al, 10 ; broj sektora koje citamo
+mov al, 20 ; broj sektora koje citamo
 int 0x13 ; BIOS interrupt (funkcija) za pristup disku 
 
 jc disk_read_error
-	
+
 switch_32b:
 	cli ; iskljucujemo interrupt
 	lgdt[gdt_descriptor] ; ucitavamo GDT koriscenjem descriptor-a
@@ -46,26 +45,26 @@ disk_read_error:
 ;GDT setup
 
 gdt_start:
-	dd 0x00000000 ; NULL desrciptor - neophodan za ulaz u GDT
-	dd 0x00000000 ; Nastavak NULL descriptor-a
+	dd 0x0 ; NULL desrciptor - neophodan za ulaz u GDT
+	dd 0x0 ; Nastavak NULL descriptor-a
 		
 ;Code segment descriptor
 gdt_code:
 	dw 0xFFFF ; Segment limit (4KB granularnost, maksimalni limit)
-	dw 0x0000 ; Base address (nizih 16 bitova)
-	db 0x00 ; Base address (sledecih 8 bitova)
+	dw 0x0 ; Base address (nizih 16 bitova)
+	db 0x0 ; Base address (sledecih 8 bitova)
 	db 10011010b ; Access byte
 	db 11001111b ; Flags
-	db 0x00 ; Base address (visih 8 bitova)
+	db 0x0 ; Base address (visih 8 bitova)
 	
 ;Data segment descriptor
 gdt_data:
 	dw 0xFFFF ; Segment limit (isto kao code segment)
-	dw 0x0000 ; Base
-	db 0x00 ; Base
+	dw 0x0 ; Base
+	db 0x0 ; Base
 	db 10010010b ; Access byte
 	db 11001111b ; Flags
-	db 0x00 ; Base address
+	db 0x0 ; Base address
 	
 gdt_end:
 	

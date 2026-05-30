@@ -10,6 +10,7 @@
 #define KEYBOARD_PORT 0x60
 #define KEYBOARD_BUFFER_SIZE 256
 
+bool buffer_has_data();
 void init_keyboard();
 void buffer_push(uint8_t scancode);
 uint8_t buffer_pop();

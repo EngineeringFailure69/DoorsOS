@@ -29,14 +29,19 @@ void _start()
 	{
    	    if (first_screen == true)
    	    {
-   	    	scancode = buffer_pop();
-   	    	if(scancode == 0x1C)
+   	    	if(buffer_has_data())
    	    	{
-   	    	    clear_screen();
-   	    	    first_screen = false;
-   	    	}
+	   	    scancode = buffer_pop();
+	   	    if(scancode == 0x1C)
+	   	    {
+	   	    	clear_screen();
+	   	        first_screen = false;
+	   	    }
+	   	}
    	    }
-   	    else if(!first_screen)
+   	    else if(!first_screen && buffer_has_data())
    	    	print_keyboard_character();
+   	    else
+   	    	asm volatile("hlt");
 	}
 }
